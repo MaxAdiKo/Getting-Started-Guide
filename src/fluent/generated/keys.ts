@@ -17,6 +17,10 @@ declare global {
                         table: 'sys_script_client'
                         id: '1b5366b4bc014aa886772ae6829983e4'
                     }
+                    'license-center-page': {
+                        table: 'sys_ui_page'
+                        id: '85d6e977bf42471a9a5c42755750a736'
+                    }
                     package_json: {
                         table: 'sys_module'
                         id: '8471f8d49b144dd08631fa08645ba3d1'
@@ -24,6 +28,14 @@ declare global {
                     src_server_script_ts: {
                         table: 'sys_module'
                         id: '388e15bdafe4444095036b906938819b'
+                    }
+                    'x_1917927_hello_wo/main': {
+                        table: 'sys_ux_lib_asset'
+                        id: '6628da95c8f94238a74a3a9fd9cb2fda'
+                    }
+                    'x_1917927_hello_wo/main.js.map': {
+                        table: 'sys_ux_lib_asset'
+                        id: '970e1b10121f4e549094d1c03e755b2d'
                     }
                 }
             }
