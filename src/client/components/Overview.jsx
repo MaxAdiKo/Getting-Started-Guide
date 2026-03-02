@@ -15,40 +15,44 @@ export default function Overview({ navigate }) {
     </div>
   );
 
-  const DonutChart = () => (
-    <div className="donut-chart">
-      <svg width="150" height="150" viewBox="0 0 150 150">
-        <circle
-          cx="75"
-          cy="75"
-          r="60"
-          fill="none"
-          stroke="#e2e8f0"
-          strokeWidth="20"
-        />
-        <circle
-          cx="75"
-          cy="75"
-          r="60"
-          fill="none"
-          stroke="url(#gradient)"
-          strokeWidth="20"
-          strokeDasharray={`${Math.PI * 60 * 0.75} ${Math.PI * 60 * 0.25}`}
-          strokeDashoffset={Math.PI * 60 * 0.25}
-          transform="rotate(-90 75 75)"
-        />
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#667eea" />
-            <stop offset="100%" stopColor="#764ba2" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <div className="chart-center">
-        <span className="chart-percentage">75%</span>
+  const DonutChart = () => {
+    const size = 160;
+    const strokeWidth = 28;    
+    const radius = (size - strokeWidth) / 2;
+    const center = size / 2;
+  
+    return (
+      <div className="donut-chart">
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <defs>
+            <linearGradient
+              id="gradientFull"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#3B3FCB" />
+              <stop offset="100%" stopColor="#C9CCF7" />
+            </linearGradient>
+          </defs>
+  
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke="url(#gradientFull)"
+            strokeWidth={strokeWidth}
+          />
+        </svg>
+  
+        <div className="chart-center">
+          <span className="chart-percentage">75%</span>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const handleCostCardClick = () => {
     navigate('license-center/cost');
