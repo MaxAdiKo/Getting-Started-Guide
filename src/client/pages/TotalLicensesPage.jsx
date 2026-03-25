@@ -1,5 +1,5 @@
 import React from 'react';
-import { LicenseDataService } from '../services/LicenseDataService.js';
+import licenseDataService from '../services/LicenseDataService.js';
 import './TotalLicensesPage.css';
 
 export default function TotalLicensesPage({ navigate }) {

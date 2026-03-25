@@ -1,5 +1,5 @@
 import React from 'react';
-import { LicenseDataService } from '../services/LicenseDataService.js';
+import licenseDataService from '../services/LicenseDataService.js';
 import './LicensesTable.css';
 
 export default function LicensesTable({ navigate }) {
