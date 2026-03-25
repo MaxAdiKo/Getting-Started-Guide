@@ -1,5 +1,5 @@
 import React from 'react';
-import licenseDataService from '../services/LicenseDataService.js';
+import { LicenseDataService } from '../services/LicenseDataService.js';
 import './CostPage.css';
 
 export default function CostPage({ navigate }) {

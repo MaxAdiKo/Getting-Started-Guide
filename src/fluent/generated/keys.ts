@@ -21,10 +21,6 @@ declare global {
                         table: 'sys_ui_page'
                         id: '85d6e977bf42471a9a5c42755750a736'
                     }
-                    LicenseDataAPI: {
-                        table: 'sys_script_include'
-                        id: '355f28604c794050867eaf6d5df286c4'
-                    }
                     package_json: {
                         table: 'sys_module'
                         id: '8471f8d49b144dd08631fa08645ba3d1'
@@ -35,7 +31,7 @@ declare global {
                     }
                     'src_server_script-includes_license-data-api_js': {
                         table: 'sys_module'
-                        id: '3b6f8173f58b40a790e9e5047e06ddc5'
+                        id: '8cb495179a034d319925cb2330f46963'
                     }
                     'x_1917927_hello_wo/main': {
                         table: 'sys_ux_lib_asset'

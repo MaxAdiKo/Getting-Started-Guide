@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import licenseDataService from '../services/LicenseDataService.js';
+import { LicenseDataService } from '../services/LicenseDataService.js';
 import './LicenseReturnPage.css';
 
 export default function LicenseReturnPage({ navigate }) {
