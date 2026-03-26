@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './Overview.css';
 
 export default function Overview({ navigate }) {
+  const [totalCost, setTotalCost] = useState('Loading...');
+  const [licenseCount, setLicenseCount] = useState('...');
+  const [costGrowth, setCostGrowth] = useState('...');
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [cost, count, growth] = await Promise.all([
+          LicenseDataService.getTotalCostFormatted(),
+          LicenseDataService.getLicenseCount(),
+          LicenseDataService.getCostGrowth()
+        ]);
+        setTotalCost(cost);
+        setLicenseCount(count);
+        setCostGrowth(growth);
+      } catch (err) {
+        setTotalCost('Error');
+        setLicenseCount('Error');
+        setCostGrowth('Error');
+      }
+    }
+    load();
+  }, []);
+
   const BarChart = ({ data }) => (
     <div className="mini-chart">
       {data.map((value, index) => (
@@ -17,26 +41,19 @@ export default function Overview({ navigate }) {
 
   const DonutChart = () => {
     const size = 160;
-    const strokeWidth = 28;    
+    const strokeWidth = 28;
     const radius = (size - strokeWidth) / 2;
     const center = size / 2;
-  
+
     return (
       <div className="donut-chart">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <defs>
-            <linearGradient
-              id="gradientFull"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="100%"
-            >
+            <linearGradient id="gradientFull" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#3B3FCB" />
               <stop offset="100%" stopColor="#C9CCF7" />
             </linearGradient>
           </defs>
-  
           <circle
             cx={center}
             cy={center}
@@ -46,7 +63,6 @@ export default function Overview({ navigate }) {
             strokeWidth={strokeWidth}
           />
         </svg>
-  
         <div className="chart-center">
           <span className="chart-percentage">75%</span>
         </div>
@@ -54,18 +70,8 @@ export default function Overview({ navigate }) {
     );
   };
 
-  const handleCostCardClick = () => {
-    navigate('license-center/cost');
-  };
-
-  const handleLicensesCardClick = () => {
-    navigate('license-center/licenses');
-  };
-
-  // Dynamische Daten aus dem Service holen
-  const totalCost = LicenseDataService.getTotalCostFormatted();
-  const licenseCount = LicenseDataService.getLicenseCount();
-  const costGrowth = LicenseDataService.getCostGrowth();
+  const handleCostCardClick = () => navigate('license-center/cost');
+  const handleLicensesCardClick = () => navigate('license-center/licenses');
 
   return (
     <section className="overview">
@@ -80,7 +86,7 @@ export default function Overview({ navigate }) {
             <BarChart data={[60, 80, 45, 90, 75]} />
           </div>
         </div>
-        
+
         <div className="overview-card clickable-card" onClick={handleLicensesCardClick}>
           <div className="card-content">
             <div className="card-info">
@@ -92,7 +98,7 @@ export default function Overview({ navigate }) {
           </div>
         </div>
       </div>
-      
+
       <div className="overview-right">
         <div className="overview-card large-card">
           <DonutChart />

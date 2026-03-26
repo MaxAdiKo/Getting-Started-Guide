@@ -1,14 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './LicensesTable.css';
 
 export default function LicensesTable({ navigate }) {
+  const [licenses, setLicenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await LicenseDataService.getHomepageLicenses(2);
+        setLicenses(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
   const handleSeeAll = () => {
     navigate('license-center/licenses');
   };
 
-  // Dynamische Daten aus dem Service holen - nur erste 2 für Homepage
-  const licenses = LicenseDataService.getHomepageLicenses(2);
+  if (loading) return <p>Loading licenses...</p>;
+  if (error)   return <p>Error: {error}</p>;
 
   return (
     <section className="licenses-section">
@@ -23,9 +41,9 @@ export default function LicensesTable({ navigate }) {
         <table className="licenses-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Date</th>
+              <th>Product ID</th>
+              <th>Product</th>
+              <th>Last Used</th>
               <th>Status</th>
               <th>Cost</th>
             </tr>

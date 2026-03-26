@@ -1,28 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './LicenseReturnPage.css';
 
 export default function LicenseReturnPage({ navigate }) {
+  const [licenses, setLicenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedLicense, setSelectedLicense] = useState(null);
 
-  // Alle Lizenzen aus dem Service holen
-  const licenses = LicenseDataService.getLicensesForReturn();
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await LicenseDataService.getLicensesForReturn();
+        setLicenses(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
-  const handleLicenseClick = (license) => {
-    setSelectedLicense(license);
-  };
+  const handleLicenseClick = (license) => setSelectedLicense(license);
 
   const handleReturn = () => {
     if (selectedLicense) {
-      // Get current user (in real ServiceNow this would be from user context)
       const currentUser = window.g_user?.getUserName() || 'current_user';
       console.log(`User ${currentUser} wants to return license ${selectedLicense.software} with ID ${selectedLicense.id}`);
     }
   };
 
-  const handleBackHome = () => {
-    navigate('');
-  };
+  const handleBackHome = () => navigate('');
+
+  if (loading) return <p>Loading licenses...</p>;
+  if (error)   return <p>Error: {error}</p>;
 
   return (
     <div className="license-return-page">
@@ -30,7 +42,7 @@ export default function LicenseReturnPage({ navigate }) {
         <button className="back-btn" onClick={handleBackHome}>← Back to License Center</button>
         <h1>License Return</h1>
       </div>
-      
+
       <div className="return-layout">
         <div className="licenses-table-section">
           <h2>Your Licenses ({licenses.length} total)</h2>
@@ -38,27 +50,29 @@ export default function LicenseReturnPage({ navigate }) {
             <table className="return-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Software</th>
+                  <th>Product ID</th>
+                  <th>Product</th>
+                  <th>Last Used</th>
                   <th>Status</th>
                   <th>Price</th>
                 </tr>
               </thead>
               <tbody>
-                {licenses.map((license, index) => (
-                  <tr 
-                    key={index} 
+               {licenses.map((license, index) => (
+                  <tr
+                    key={index}
                     className={`table-row ${selectedLicense?.id === license.id ? 'selected' : ''}`}
                     onClick={() => handleLicenseClick(license)}
                   >
                     <td className="license-id">{license.id}</td>
-                    <td className="license-software">{license.software}</td>
+                    <td className="license-name">{license.name}</td>
+                    <td className="license-date">{license.date}</td>
                     <td>
                       <span className={`status-badge ${license.status.toLowerCase()}`}>
                         {license.status}
                       </span>
                     </td>
-                    <td className="license-price">{license.price}</td>
+                    <td className="license-cost">{license.cost}</td>
                   </tr>
                 ))}
               </tbody>
@@ -69,17 +83,17 @@ export default function LicenseReturnPage({ navigate }) {
         <div className="detail-panel">
           {selectedLicense ? (
             <div className="license-details">
-              <h3>License Details</h3>
+              <h2>License Details</h2>
               <div className="detail-field">
                 <label>Software Name</label>
-                <div className="field-value">{selectedLicense.software}</div>
+                <div className="field-value">{selectedLicense.name}</div>
               </div>
               <div className="detail-field">
                 <label>Price</label>
-                <div className="field-value">{selectedLicense.price}</div>
+                <div className="field-value">{selectedLicense.cost}</div>
               </div>
               <div className="detail-field">
-                <label>ID</label>
+                <label>Product ID</label>
                 <div className="field-value">{selectedLicense.id}</div>
               </div>
               <button className="return-btn" onClick={handleReturn}>

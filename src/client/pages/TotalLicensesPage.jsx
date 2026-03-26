@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './TotalLicensesPage.css';
 
 export default function TotalLicensesPage({ navigate }) {
-  const handleBackHome = () => {
-    navigate('');
-  };
+  const [allLicenses, setAllLicenses] = useState([]);
+  const [totalCost, setTotalCost] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Alle Lizenzen aus dem Service holen
-  const allLicenses = LicenseDataService.getAllLicenses();
-  const totalCost = LicenseDataService.getTotalCost();
+  useEffect(() => {
+    async function load() {
+      try {
+        const [licenses, cost] = await Promise.all([
+          LicenseDataService.getAllLicenses(),
+          LicenseDataService.getTotalCost()
+        ]);
+        setAllLicenses(licenses);
+        setTotalCost(cost);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const handleBackHome = () => navigate('');
+
+  if (loading) return <p>Loading licenses...</p>;
+  if (error)   return <p>Error: {error}</p>;
 
   return (
     <div className="total-licenses-page">
@@ -24,20 +44,22 @@ export default function TotalLicensesPage({ navigate }) {
             </div>
             <div className="summary-item">
               <span className="summary-label">Total Cost</span>
-              <span className="summary-value">${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="summary-value">
+                ${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="licenses-container">
         <div className="scrollable-table">
           <table className="all-licenses-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Date</th>
+                <th>Product ID</th>
+                <th>Product</th>
+                <th>Last Used</th>
                 <th>Status</th>
                 <th>Cost</th>
               </tr>
