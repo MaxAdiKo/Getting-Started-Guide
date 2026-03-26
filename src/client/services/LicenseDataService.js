@@ -1,4 +1,3 @@
-// Hilfsfunktion für Cookie lesen (außerhalb der Klasse)
 function getCookie(name) {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
   return match ? match[2] : '';
@@ -6,12 +5,21 @@ function getCookie(name) {
 
 export class LicenseDataService {
 
-  static async _fetchFromServiceNow() {
+  // Neu: mit optionalem employeeId Filter
+  static async _fetchFromServiceNow(employeeId = null) {
     const token = window.g_ck || getCookie('glide_user_activity');
 
-    const url = '/api/now/table/u_software_license' +
-                '?sysparm_fields=u_import_id,u_product,u_employee_id,u_last_used,u_status,u_cost' +
-                '&sysparm_limit=1000';
+    let url = '/api/now/table/u_software_license' +
+              '?sysparm_fields=u_import_id,u_product,u_employee_id,u_last_used,u_status,u_cost' +
+              '&sysparm_limit=1000';
+
+    // Filter auf employee ID wenn angegeben
+    if (employeeId) {
+      url += `&sysparm_query=u_employee_id=${encodeURIComponent(employeeId)}`;
+    }
+
+    console.log('Fetching URL:', url); // NEU
+    console.log('employeeId:', employeeId); // NEU
 
     const response = await fetch(url, {
       headers: {
@@ -46,41 +54,48 @@ export class LicenseDataService {
     }));
   }
 
-  static async getAllLicenses() {
-    const licenses = await this._fetchFromServiceNow();
+  // Neu: für Login Validierung
+  static async getLicensesByEmployee(employeeId) {
+    const licenses = await this._fetchFromServiceNow(employeeId);
+    console.log('Gefundene Lizenzen:', licenses.length, licenses[0]);
+    return licenses;
+  }
+
+  static async getAllLicenses(employeeId = null) {
+    const licenses = await this._fetchFromServiceNow(employeeId);
     return licenses.map(l => ({ ...l, cost: `$${l.cost.toFixed(2)}` }));
   }
 
-  static async getLicenseCount() {
-    const licenses = await this._fetchFromServiceNow();
+  static async getLicenseCount(employeeId = null) {
+    const licenses = await this._fetchFromServiceNow(employeeId);
     return licenses.length;
   }
 
-  static async getTotalCost() {
-    const licenses = await this._fetchFromServiceNow();
+  static async getTotalCost(employeeId = null) {
+    const licenses = await this._fetchFromServiceNow(employeeId);
     return licenses.reduce((sum, l) => sum + l.cost, 0);
   }
 
-  static async getTotalCostFormatted() {
-    const total = await this.getTotalCost();
+  static async getTotalCostFormatted(employeeId = null) {
+    const total = await this.getTotalCost(employeeId);
     return `$${total.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })}`;
   }
 
-  static async getLicensesForReturn() {
-    const licenses = await this._fetchFromServiceNow();
+  static async getLicensesForReturn(employeeId = null) {
+    const licenses = await this._fetchFromServiceNow(employeeId);
     return licenses.map(l => ({ ...l, cost: `$${l.cost.toFixed(2)}` }));
   }
 
-  static async getHomepageLicenses(limit = 2) {
-    const licenses = await this.getAllLicenses();
+  static async getHomepageLicenses(employeeId = null, limit = 2) {
+    const licenses = await this.getAllLicenses(employeeId);
     return licenses.slice(0, limit);
   }
 
-  static async getMonthlyCosts() {
-    const totalCost = await this.getTotalCost();
+  static async getMonthlyCosts(employeeId = null) {
+    const totalCost = await this.getTotalCost(employeeId);
     return [
       { month: 'Aug', value: Math.round(totalCost * 0.75) },
       { month: 'Sep', value: Math.round(totalCost * 0.95) },
@@ -90,8 +105,8 @@ export class LicenseDataService {
     ];
   }
 
-  static async getLineChartData() {
-    const total = await this.getTotalCost();
+  static async getLineChartData(employeeId = null) {
+    const total = await this.getTotalCost(employeeId);
     const base = total / 100;
     return {
       main:       [0.45, 0.52, 0.48, 0.65, 0.59, 0.73].map(f => Math.round(base * f)),
@@ -99,8 +114,8 @@ export class LicenseDataService {
     };
   }
 
-  static async getCostGrowth() {
-    const monthly = await this.getMonthlyCosts();
+  static async getCostGrowth(employeeId = null) {
+    const monthly = await this.getMonthlyCosts(employeeId);
     const current  = monthly[monthly.length - 2].value;
     const previous = monthly[monthly.length - 3].value;
     const growth = ((current - previous) / previous) * 100;
