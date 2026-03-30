@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './CostPage.css';
 
-export default function CostPage({ navigate }) {
+export default function CostPage({ navigate, employeeId }) {
   const [totalCost, setTotalCost] = useState('Loading...');
   const [costGrowth, setCostGrowth] = useState('...');
   const [barChartData, setBarChartData] = useState([]);
@@ -12,10 +12,10 @@ export default function CostPage({ navigate }) {
     async function load() {
       try {
         const [cost, growth, barData, lineData] = await Promise.all([
-          LicenseDataService.getTotalCostFormatted(),
-          LicenseDataService.getCostGrowth(),
-          LicenseDataService.getMonthlyCosts(),
-          LicenseDataService.getLineChartData()
+          LicenseDataService.getTotalCostFormatted(employeeId),
+          LicenseDataService.getCostGrowth(employeeId),
+          LicenseDataService.getMonthlyCosts(employeeId),
+          LicenseDataService.getLineChartData(employeeId)
         ]);
         setTotalCost(cost);
         setCostGrowth(growth);
@@ -27,7 +27,7 @@ export default function CostPage({ navigate }) {
       }
     }
     load();
-  }, []);
+  }, [employeeId]);
 
   const handleBackHome = () => navigate('');
 

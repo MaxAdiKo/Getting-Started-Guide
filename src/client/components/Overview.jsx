@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './Overview.css';
 
-export default function Overview({ navigate }) {
+export default function Overview({ navigate, employeeId }) {
   const [totalCost, setTotalCost] = useState('Loading...');
   const [licenseCount, setLicenseCount] = useState('...');
   const [costGrowth, setCostGrowth] = useState('...');
@@ -11,9 +11,9 @@ export default function Overview({ navigate }) {
     async function load() {
       try {
         const [cost, count, growth] = await Promise.all([
-          LicenseDataService.getTotalCostFormatted(),
-          LicenseDataService.getLicenseCount(),
-          LicenseDataService.getCostGrowth()
+          LicenseDataService.getTotalCostFormatted(employeeId),
+          LicenseDataService.getLicenseCount(employeeId),
+          LicenseDataService.getCostGrowth(employeeId)
         ]);
         setTotalCost(cost);
         setLicenseCount(count);
@@ -25,7 +25,7 @@ export default function Overview({ navigate }) {
       }
     }
     load();
-  }, []);
+  }, [employeeId]);
 
   const BarChart = ({ data }) => (
     <div className="mini-chart">

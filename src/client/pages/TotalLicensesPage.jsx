@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './TotalLicensesPage.css';
 
-export default function TotalLicensesPage({ navigate }) {
+export default function TotalLicensesPage({ navigate, employeeId }) {
   const [allLicenses, setAllLicenses] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -12,8 +12,8 @@ export default function TotalLicensesPage({ navigate }) {
     async function load() {
       try {
         const [licenses, cost] = await Promise.all([
-          LicenseDataService.getAllLicenses(),
-          LicenseDataService.getTotalCost()
+          LicenseDataService.getAllLicenses(employeeId),
+          LicenseDataService.getTotalCost(employeeId)
         ]);
         setAllLicenses(licenses);
         setTotalCost(cost);
@@ -24,7 +24,7 @@ export default function TotalLicensesPage({ navigate }) {
       }
     }
     load();
-  }, []);
+  }, [employeeId]);
 
   const handleBackHome = () => navigate('');
 

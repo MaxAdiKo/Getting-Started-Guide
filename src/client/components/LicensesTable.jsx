@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './LicensesTable.css';
 
-export default function LicensesTable({ navigate }) {
+export default function LicensesTable({ navigate, employeeId }) {
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ export default function LicensesTable({ navigate }) {
   useEffect(() => {
     async function load() {
       try {
-        const data = await LicenseDataService.getHomepageLicenses(2);
+        const data = await LicenseDataService.getHomepageLicenses(employeeId, 2);
         setLicenses(data);
       } catch (err) {
         setError(err.message);
@@ -19,7 +19,7 @@ export default function LicensesTable({ navigate }) {
       }
     }
     load();
-  }, []);
+  }, [employeeId]);
 
   const handleSeeAll = () => {
     navigate('license-center/licenses');

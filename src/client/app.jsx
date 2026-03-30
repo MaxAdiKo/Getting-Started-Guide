@@ -44,15 +44,15 @@ export default function App() {
   const renderCurrentPage = () => {
     switch (currentRoute) {
       case 'license-center/return':
-        return <LicenseReturnPage navigate={navigate} />;
+        return <LicenseReturnPage navigate={navigate} employeeId={employeeId} />;
       case 'license-center/cost':
-        return <CostPage navigate={navigate} />;
+        return <CostPage navigate={navigate} employeeId={employeeId} />;
       case 'license-center/licenses':
-        return <TotalLicensesPage navigate={navigate} />;
+        return <TotalLicensesPage navigate={navigate} employeeId={employeeId} />;
       case 'license-center/software':
         return <SoftwarePage navigate={navigate} />;
       default:
-        return <LicenseCenterHome navigate={navigate} />;
+        return <LicenseCenterHome navigate={navigate} employeeId={employeeId} />;
     }
   };
 

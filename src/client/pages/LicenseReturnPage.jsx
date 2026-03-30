@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LicenseDataService } from '../services/LicenseDataService.js';
 import './LicenseReturnPage.css';
 
-export default function LicenseReturnPage({ navigate }) {
+export default function LicenseReturnPage({ navigate, employeeId }) {
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ export default function LicenseReturnPage({ navigate }) {
   useEffect(() => {
     async function load() {
       try {
-        const data = await LicenseDataService.getLicensesForReturn();
+        const data = await LicenseDataService.getLicensesForReturn(employeeId);
         setLicenses(data);
       } catch (err) {
         setError(err.message);
@@ -20,7 +20,7 @@ export default function LicenseReturnPage({ navigate }) {
       }
     }
     load();
-  }, []);
+  }, [employeeId]);
 
   const handleLicenseClick = (license) => setSelectedLicense(license);
 
